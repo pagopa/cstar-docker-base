@@ -1,6 +1,6 @@
 trigger: none
 pr:
-  - autoCancel: true
+  autoCancel: true
 
 variables:
   dockerfileRelativePath: 'Dockerfile'
