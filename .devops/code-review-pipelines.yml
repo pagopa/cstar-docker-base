@@ -8,9 +8,6 @@ variables:
   # Agent VM image name for Build
   vmImageNameDefault: 'ubuntu-latest'
 
-  # Image Repository Name
-  imageRepository: 'bpdmscitizen'
-
 stages:
   - stage: Build
     displayName: Build
@@ -23,5 +20,5 @@ stages:
           - task: Docker@2
             displayName: Build
             inputs:
-              repository: 'cstar-docker-base'
+              repository: 'image'
               command: 'build'
