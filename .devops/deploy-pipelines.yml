@@ -32,5 +32,5 @@ steps:
       repository: 'cstar-docker-base'
       command: "buildAndPush"
       tags: |
-        "jdk11-ai3.1.0"
-        "latest"
+        jdk11-ai3.1.0
+        latest
