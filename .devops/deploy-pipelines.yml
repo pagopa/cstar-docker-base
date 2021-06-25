@@ -1,0 +1,36 @@
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+      - release-*
+      - features/*
+      - hotfix/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')))]
+
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release-dev') }}:
+    environment: 'DEV'
+    dockerRegistryServiceConnection: '$(DEV_CONTAINER_REGISTRY_SERVICE_CONN)'
+  ${{ if or(eq(variables['Build.SourceBranch'], 'refs/heads/release-uat'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix')) }}:
+    environment: 'UAT'
+    dockerRegistryServiceConnection: '$(UAT_CONTAINER_REGISTRY_SERVICE_CONN)'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/master') }}:
+    environment: 'PROD'
+    dockerRegistryServiceConnection: '$(PROD_CONTAINER_REGISTRY_SERVICE_CONN)'
+
+steps:
+  - task: Docker@2
+    displayName: 'Build and Push Image on ${{ variables.environment }}'
+    condition: eq(variables.isToDeploy, true)
+    inputs:
+      containerRegistry: '$(dockerRegistryServiceConnection)'
+      repository: 'cstar-docker-base'
+      command: "buildAndPush"
+      tags: |
+        "jdk11-ai3.1.0"
+        "latest"
